@@ -23,7 +23,7 @@ from typing import List, Optional
 import corpussmith as _pkg
 
 
-NEW_VERBS = {"new", "search", "import", "build", "review-project", "review_project", "export", "config", "premium"}
+NEW_VERBS = {"new", "search", "search-draft", "search_draft", "import", "build", "review-project", "review_project", "export", "config", "premium"}
 
 # Global flags that can precede a new verb without breaking dispatch.
 # These mirror the legacy top-level flags so invocations like
@@ -52,6 +52,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         handler = {
             "new": _cmd_new,
             "search": _cmd_search,
+            "search_draft": _cmd_search_draft,
             "import": _cmd_import,
             "build": _cmd_build,
             "review_project": _cmd_review,
@@ -211,6 +212,118 @@ def _cmd_search(argv: List[str]) -> int:
 
     # Hand off to the legacy harvest runner. We pass the expanded subjects
     # string so the existing 20-source pipeline does the actual network work.
+    from corpussmith._legacy import run_harvest, _print_harvest_final
+    subjects = plan.as_subject_strings()
+    print(f"\nrunning harvest with {len(subjects)} subject(s): {subjects}")
+    result = run_harvest(
+        subjects=subjects,
+        output_dir=project.root,
+        max_results=max_results,
+        min_score=min_score,
+        max_downloads=100,
+        skip_download=skip_download,
+        verbose=False,
+    )
+    _print_harvest_final(result)
+    return 0
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# search-draft  (Premium)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _cmd_search_draft(argv: List[str]) -> int:
+    """corpussmith search-draft [--project DIR] [options] DRAFT_PATH
+
+    Premium feature. Reads a PDF, DOCX, or plain-text draft and seeds a
+    full 20-source literature harvest from the document's own language —
+    no keyword typing required.
+
+    Options
+    -------
+    --max-results N    Results per source (default: 25)
+    --min-score N      Relevance threshold (default: 10)
+    --no-download      Metadata only, skip file downloads
+    --dry-run          Show query plan without running harvest
+    --multilingual     Add multilingual query variants
+    --recent           Bias toward recent publications
+    --no-review        Skip review/meta-analysis query variant
+    """
+    from corpussmith.premium import require
+    require("search-draft")
+
+    include_multilingual = _pop_flag(argv, "--multilingual")
+    include_recency      = _pop_flag(argv, "--recent")
+    no_review            = _pop_flag(argv, "--no-review")
+    dry_run              = _pop_flag(argv, "--dry-run")
+    max_results          = int(_pop_option(argv, "--max-results", default="25") or 25)
+    min_score            = float(_pop_option(argv, "--min-score", default="10") or 10)
+    skip_download        = _pop_flag(argv, "--no-download")
+
+    project = _resolve_project(argv)
+
+    draft_path: Optional[Path] = None
+    for arg in argv:
+        if not arg.startswith("-"):
+            draft_path = Path(arg).expanduser().resolve()
+            break
+
+    if draft_path is None:
+        print("error: specify a draft file (PDF, DOCX, or TXT)", file=sys.stderr)
+        print("  corpussmith search-draft --project DIR path/to/draft.pdf", file=sys.stderr)
+        return 1
+
+    if not draft_path.exists():
+        print(f"error: file not found: {draft_path}", file=sys.stderr)
+        return 1
+
+    from corpussmith.premium.search_draft import SUPPORTED_EXTENSIONS
+    if draft_path.suffix.lower() not in SUPPORTED_EXTENSIONS:
+        exts = "  ".join(sorted(SUPPORTED_EXTENSIONS))
+        print(f"error: unsupported format '{draft_path.suffix}'. Supported: {exts}", file=sys.stderr)
+        return 1
+
+    print(f"\n  [search-draft]  reading {draft_path.name} …")
+    try:
+        from corpussmith.premium.search_draft import extract_seed
+        seed = extract_seed(draft_path)
+    except RuntimeError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+
+    if not seed.as_query_string():
+        print("error: could not extract readable text from the document.", file=sys.stderr)
+        print("  Install pypdf (PDF) or python-docx (DOCX) for best results.", file=sys.stderr)
+        return 1
+
+    print()
+    print(f"  Title   : {seed.title[:100]}" if seed.title else "  (no title line detected)")
+    if seed.salient_phrases:
+        print(f"  Phrases : {' · '.join(seed.salient_phrases[:6])}")
+    print()
+
+    from corpussmith.search.query_expansion import expand
+    from corpussmith.search.query_plan import Query
+
+    plan = expand(
+        seed.as_query_string(),
+        include_review=not no_review,
+        include_recency=include_recency,
+        include_multilingual=include_multilingual,
+    )
+
+    for phrase in seed.extra_phrases(n=3):
+        plan.queries.append(
+            Query(f'"{phrase}"', "draft-phrase", "salient phrase from draft body")
+        )
+
+    print(plan.pretty())
+    project.record_search(seed.as_query_string(), f"search-draft:{plan.classification}", len(plan.queries))
+
+    if dry_run:
+        print("\n--dry-run: not executing harvest")
+        return 0
+
     from corpussmith._legacy import run_harvest, _print_harvest_final
     subjects = plan.as_subject_strings()
     print(f"\nrunning harvest with {len(subjects)} subject(s): {subjects}")
@@ -457,6 +570,7 @@ def _cmd_config(argv: List[str]) -> int:
 # ─────────────────────────────────────────────────────────────────────────────
 
 _PREMIUM_FEATURES = [
+    ("search-draft",   "Seed a literature search from a draft PDF, DOCX, or TXT"),
     ("atlas",          "Citation / co-citation graph over your corpus"),
     ("clusters",       "Topic clustering across harvested records"),
     ("contradictions", "Claim-conflict detection between sources"),
