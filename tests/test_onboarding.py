@@ -68,8 +68,8 @@ def _drive(answers_lines: list[str], default_name: str = "") -> tuple[WizardAnsw
 
 class WizardFlowTests(unittest.TestCase):
     def test_all_defaults_accepted_by_blank_lines(self) -> None:
-        # 7 questions + 1 confirm.
-        ans, _ = _drive([""] * 8, default_name="my-proj")
+        # 7 setup questions + 1 brief question (default n) + 1 confirm.
+        ans, _ = _drive([""] * 9, default_name="my-proj")
         self.assertIsNotNone(ans)
         assert ans is not None
         self.assertEqual(ans.name, "my-proj")
@@ -84,7 +84,9 @@ class WizardFlowTests(unittest.TestCase):
         ans, out = _drive([
             "pain-study",
             "chronic pain neuroplasticity in adolescents",
-            "3", "1", "", "", "1", "",
+            "3", "1", "", "", "1",
+            "",  # brief question — default n
+            "",  # confirm
         ])
         self.assertIsNotNone(ans)
         assert ans is not None
@@ -102,7 +104,8 @@ class WizardFlowTests(unittest.TestCase):
             "x", "", "", "", "", "",
             str(len(LANGUAGES)),  # "other"
             "en, gr, la",
-            "",
+            "",  # brief question — default n
+            "",  # confirm
         ])
         self.assertIsNotNone(ans)
         assert ans is not None
@@ -113,7 +116,9 @@ class WizardFlowTests(unittest.TestCase):
         ans, out = _drive([
             "x", "",
             "99", "2",          # field: reject 99, accept 2
-            "", "", "", "", "",
+            "", "", "", "",
+            "",  # brief question — default n
+            "",  # confirm
         ])
         self.assertIsNotNone(ans)
         assert ans is not None
@@ -121,8 +126,8 @@ class WizardFlowTests(unittest.TestCase):
         self.assertIn("please type a number", out)
 
     def test_user_declines_confirmation(self) -> None:
-        # All defaults, then "n" on confirm.
-        ans, out = _drive([""] * 7 + ["n"])
+        # All defaults (7 setup + 1 brief question = 8 blanks), then "n" on confirm.
+        ans, out = _drive([""] * 8 + ["n"])
         self.assertIsNone(ans)
         self.assertIn("Cancelled", out)
 
@@ -159,7 +164,9 @@ class CLIWizardIntegrationTests(unittest.TestCase):
             # trust default(peer_reviewed), languages default(en), confirm.
             stdin_text = "\n".join([
                 "beta-biology", "photosynthesis in low-light mosses",
-                "3", "1", "", "", "1", "",
+                "3", "1", "", "", "1",
+                "",  # brief question — default n
+                "",  # confirm
             ]) + "\n"
             result = subprocess.run(
                 SF + ["new", "--wizard", str(target)],
@@ -177,7 +184,8 @@ class CLIWizardIntegrationTests(unittest.TestCase):
     def test_wizard_cancelled_creates_nothing(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp) / "cancel"
-            stdin_text = "\n".join([""] * 7 + ["n"]) + "\n"
+            # 7 setup prompts + 1 brief prompt (default n) + decline confirm.
+            stdin_text = "\n".join([""] * 8 + ["n"]) + "\n"
             result = subprocess.run(
                 SF + ["new", "--wizard", str(target)],
                 input=stdin_text, capture_output=True, text=True, check=False,

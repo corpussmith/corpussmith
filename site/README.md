@@ -1,6 +1,6 @@
-# Corpus Smith — static site
+# ScholarForge — static site
 
-Static HTML/CSS site for Corpus Smith. Modelled on feynman.is-style typography:
+Static HTML/CSS site for ScholarForge. Modelled on feynman.is-style typography:
 calm, serif body, generous whitespace, restrained colour.
 
 ## Pages

@@ -3,70 +3,209 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Corpus Smith — the provenance-first scholarly research workspace</title>
-<meta name="description" content="Terminal-based scholarly research workbench. Harvest 20 academic APIs, build trustworthy corpora, prepare writing-ready exports. Calm, scholar-first, zero mandatory dependencies.">
+<title>ScholarForge — the provenance-first scholarly research workspace</title>
+<meta name="description" content="Terminal-based scholarly research workbench. Harvest 20 academic APIs, build trustworthy corpora, prepare writing-ready exports.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<nav class="top">
-  <span class="brand">Corpus Smith</span>
-  <a href="index.html" class="current">Overview</a>
-  <a href="features.html">Features</a>
-  <a href="install.html">Install</a>
-  <a href="cli.html">CLI</a>
-  <a href="sources.html">Sources</a>
-  <a href="pricing.html">Pricing</a>
-  <span class="spacer"></span>
-  <a href="https://github.com/corpussmith/corpussmith">GitHub</a>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="brand">scholarforge</a>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
+    <div class="nav-links">
+      <a href="features.html">Features</a>
+      <a href="install.html">Install</a>
+      <a href="cli.html">CLI</a>
+      <a href="sources.html">Sources</a>
+      <a href="pricing.html">Pricing</a>
+      <span class="spacer"></span>
+      <a href="https://github.com/AnastasiosPapalias/Python/tree/main/scholarforge">GitHub</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle dark mode">☀</button>
+    </div>
+  </div>
 </nav>
 
 <main class="wrap">
-  <div class="kicker">v3.4.0-beta.1 · MIT · Python 3.8+</div>
-  <h1>The provenance-first scholarly research workspace.</h1>
-  <p class="lede">Terminal-native. Paste a title or a question; Corpus Smith expands it deterministically, harvests twenty academic sources, labels the trust of every record, and hands you a writing-ready export. No AI wrapper. No account. No lock-in.</p>
 
-  <a class="cta" href="install.html">Install in one minute →</a>
+  <!-- Hero -->
+  <section>
+    <div class="kicker">v3.4.0-beta.1 · MIT · Python 3.8+</div>
+    <h1>The provenance-first scholarly research workspace</h1>
+    <p class="hero-sub">Paste a title or a question. ScholarForge expands it deterministically, harvests twenty academic sources, labels the trust of every record, and hands you a writing-ready export. No AI wrapper. No account. No lock-in.</p>
 
-  <h2>What it does</h2>
-  <p>Corpus Smith is built for researchers, students, and authors who want calm tools. You give it a research goal in plain language. It builds the query plan, harvests the sources, keeps the provenance, and gets out of the way.</p>
+    <div class="btn-group">
+      <a href="install.html" class="btn btn-primary">Get Started</a>
+      <a href="https://github.com/AnastasiosPapalias/Python/tree/main/scholarforge" class="btn btn-secondary">GitHub</a>
+    </div>
 
-  <pre><code>$ corpussmith new my-thesis
-$ corpussmith search --project my-thesis "neural correlates of OCD compulsions"
-$ corpussmith export --project my-thesis --format bibtex</code></pre>
+    <div class="install-block">
+      <div class="install-tabs">
+        <button class="install-tab active" onclick="switchInstall('pip', this)">pip</button>
+        <button class="install-tab" onclick="switchInstall('git', this)">git clone</button>
+      </div>
+      <div class="install-body">
+        <code id="install-cmd">pip install -e .</code>
+        <button class="copy-btn" onclick="copyInstall(this)">Copy</button>
+      </div>
+    </div>
+  </section>
 
-  <h2>Why it exists</h2>
-  <p>Generic search engines throw away the scholarly signal. AI agents hallucinate citations. Reference managers capture what you already found, not what is out there. Corpus Smith sits before all of them: a calm harvester that surfaces what the open-access ecosystem actually has, labelled so you can trust it.</p>
+  <!-- What you type → what happens -->
+  <section>
+    <h2>What you type → what happens</h2>
 
-  <h2>Three promises</h2>
-  <div class="card">
-    <h3>Deterministic</h3>
-    <p>The freemium core has no model in the loop. Same input, same query plan, same record set — reproducible across machines and years.</p>
-  </div>
-  <div class="card">
-    <h3>Provenance-first</h3>
-    <p>Every record carries a source type and trust label — peer-reviewed, preprint, grey literature, book, dataset. The label is in the BibTeX note, the CSL-JSON field, and the annotated Markdown.</p>
-  </div>
-  <div class="card">
-    <h3>Scholar-first</h3>
-    <p>Humanities-friendly. Multilingual-friendly. Unicode and accent-aware. Domain lexicons for biology, neuroscience, psychiatry, classics, philosophy, and music. Zero mandatory third-party packages.</p>
-  </div>
+    <div class="command-row">
+      <div class="command-code">
+        <pre><code>$ scholarforge new my-thesis</code></pre>
+      </div>
+      <div class="command-desc">
+        <h3>Create a project</h3>
+        <p>The wizard asks seven plain-English questions. Press Enter to accept any default. Your workspace is a folder — no hidden database, no server.</p>
+      </div>
+    </div>
 
-  <h2>Who it is for</h2>
-  <ul>
-    <li>PhD candidates assembling literature review matrices</li>
-    <li>Authors writing long-form books with hundreds of sources</li>
-    <li>Independent researchers without institutional database access</li>
-    <li>Clinicians building evidence files that have to survive audit</li>
-    <li>Anyone who would rather read than fight their tooling</li>
-  </ul>
+    <div class="command-row">
+      <div class="command-code">
+        <pre><code>$ scholarforge search \
+  --project my-thesis \
+  "neural correlates of OCD"</code></pre>
+      </div>
+      <div class="command-desc">
+        <h3>Harvest sources</h3>
+        <p>ScholarForge classifies your input, expands it into a query plan, and harvests 20 academic APIs in parallel. Every record gets a trust label.</p>
+      </div>
+    </div>
 
-  <h2>Status</h2>
-  <p>Freemium <span class="tag free">stable</span> · stages 0–7 complete, 85-test suite green. Premium <span class="tag premium">seams ready</span> · atlas, clusters, contradictions, thesis-pack, book-pack, memory-graph interfaces landed in v3.4.0-beta.1; paid build in progress.</p>
+    <div class="command-row">
+      <div class="command-code">
+        <pre><code>$ scholarforge export \
+  --project my-thesis \
+  --format bibtex</code></pre>
+      </div>
+      <div class="command-desc">
+        <h3>Export bibliography</h3>
+        <p>BibTeX, CSL-JSON, or annotated Markdown — provenance labels ride with every record. Drop straight into Overleaf, Zotero, or Pandoc.</p>
+      </div>
+    </div>
+
+    <div class="command-row">
+      <div class="command-code">
+        <pre><code>$ scholarforge build \
+  --project my-thesis</code></pre>
+      </div>
+      <div class="command-desc">
+        <h3>Build knowledge dataset</h3>
+        <p>Extract, chunk, and hash every document into a JSONL dataset. Feed it to RAG systems, train retrieval indices, or just search your reading pile.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Three promises -->
+  <section>
+    <h2>Three promises</h2>
+    <div class="grid grid-3">
+      <div class="card">
+        <h3>Deterministic</h3>
+        <p>No model in the loop. Same input, same query plan, same record set — reproducible across machines and years.</p>
+      </div>
+      <div class="card">
+        <h3>Provenance-first</h3>
+        <p>Every record carries a source type and trust label — peer-reviewed, preprint, grey literature, book, dataset. The label follows through all exports.</p>
+      </div>
+      <div class="card">
+        <h3>Scholar-first</h3>
+        <p>Humanities-friendly. Multilingual. Unicode and accent-aware. Domain lexicons for six fields. Zero mandatory dependencies.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Who it's for -->
+  <section>
+    <h2>Who it's for</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-tag green">Researchers</div>
+        <h3>PhD candidates</h3>
+        <p>Assemble literature review matrices from 20 sources in one command.</p>
+      </div>
+      <div class="card">
+        <div class="card-tag green">Authors</div>
+        <h3>Book writers</h3>
+        <p>Harvest hundreds of sources for long-form work with full provenance.</p>
+      </div>
+      <div class="card">
+        <div class="card-tag blue">Independent</div>
+        <h3>No institutional access</h3>
+        <p>All 20 sources are public and free. No paywall scrapers, no proxies.</p>
+      </div>
+      <div class="card">
+        <div class="card-tag amber">Clinical</div>
+        <h3>Clinicians</h3>
+        <p>Build evidence files that survive audit with trust labels on every record.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Status -->
+  <section>
+    <h2>Status</h2>
+    <p>Freemium <span class="tag free">stable</span> — stages 0–9 complete, 95-test suite green.</p>
+    <p>Premium <span class="tag premium">seams ready</span> — atlas, clusters, contradictions, thesis-pack, book-pack, memory-graph interfaces landed; paid build in progress.</p>
+  </section>
+
 </main>
 
 <footer>
-  Corpus Smith is built by <a href="https://github.com/AnastasiosPapalias">Anastasios Papalias</a> — Thessaloniki, Greece.
-  MIT-licensed. <a href="https://github.com/corpussmith/corpussmith">Source</a>.
+  <span>Built by <a href="https://github.com/AnastasiosPapalias">Anastasios Papalias</a> · Thessaloniki, Greece</span>
+  <div class="footer-links">
+    <a href="https://github.com/AnastasiosPapalias/Python/tree/main/scholarforge">Source</a>
+    <a href="install.html">Install</a>
+    <a href="pricing.html">Pricing</a>
+  </div>
 </footer>
+
+<script>
+const installs = {
+  pip: 'pip install -e .',
+  git: 'git clone https://github.com/AnastasiosPapalias/Python.git && cd Python/scholarforge && pip install -e .'
+};
+
+function switchInstall(key, btn) {
+  document.getElementById('install-cmd').textContent = installs[key];
+  document.querySelectorAll('.install-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function copyInstall(btn) {
+  const text = document.getElementById('install-cmd').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  html.classList.toggle('dark');
+  const isDark = html.classList.contains('dark');
+  localStorage.setItem('sf-theme', isDark ? 'dark' : 'light');
+  document.querySelector('.theme-toggle').textContent = isDark ? '☾' : '☀';
+}
+
+(function() {
+  const saved = localStorage.getItem('sf-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (saved === 'dark' || (!saved && prefersDark)) {
+    document.documentElement.classList.add('dark');
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.querySelector('.theme-toggle');
+      if (btn) btn.textContent = '☾';
+    });
+  }
+})();
+</script>
+
 </body>
 </html>

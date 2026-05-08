@@ -3,69 +3,117 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pricing — Corpus Smith</title>
+<title>Pricing — ScholarForge</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<nav class="top">
-  <span class="brand">Corpus Smith</span>
-  <a href="index.html">Overview</a>
-  <a href="features.html">Features</a>
-  <a href="install.html">Install</a>
-  <a href="cli.html">CLI</a>
-  <a href="sources.html">Sources</a>
-  <a href="pricing.html" class="current">Pricing</a>
-  <span class="spacer"></span>
-  <a href="https://github.com/corpussmith/corpussmith">GitHub</a>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="brand">scholarforge</a>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
+    <div class="nav-links">
+      <a href="features.html">Features</a>
+      <a href="install.html">Install</a>
+      <a href="cli.html">CLI</a>
+      <a href="sources.html">Sources</a>
+      <a href="pricing.html" class="current">Pricing</a>
+      <span class="spacer"></span>
+      <a href="https://github.com/AnastasiosPapalias/Python/tree/main/scholarforge">GitHub</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀</button>
+    </div>
+  </div>
 </nav>
 
 <main class="wrap">
-  <div class="kicker">Pricing</div>
-  <h1>Free forever, plus a paid layer for long-form work.</h1>
-  <p class="lede">The freemium build is genuinely useful on its own. Premium is for people building theses, books, and cross-project research graphs.</p>
 
-  <h2>Freemium <span class="tag free">stable</span></h2>
-  <div class="card">
-    <h3>€0 — MIT-licensed</h3>
-    <ul>
-      <li>All 20 academic sources</li>
-      <li>Title / question → query expansion</li>
-      <li>Trust labels on every record</li>
-      <li>BibTeX, CSL-JSON, annotated Markdown exports</li>
-      <li>Project workspaces with <code>project.toml</code></li>
-      <li>Beginner onboarding wizard</li>
-      <li>Knowledge dataset builder (JSONL)</li>
-      <li>Zero mandatory third-party dependencies</li>
-    </ul>
-    <a class="cta" href="install.html">Install →</a>
-  </div>
+  <section>
+    <div class="kicker">Pricing</div>
+    <h1>Free forever, plus a paid layer</h1>
+    <p class="hero-sub">The Freemium build is genuinely useful on its own. Premium is for people building theses, books, and cross-project research graphs.</p>
+  </section>
 
-  <h2>Premium <span class="tag premium">beta</span></h2>
-  <div class="card">
-    <h3>Six seams on top of freemium</h3>
-    <p>Premium adds structured analysis across the corpus you already harvested. It never replaces or paywalls freemium functionality — it layers on top.</p>
-    <ul>
-      <li><strong>Atlas</strong> — citation / co-citation graph of your corpus.</li>
-      <li><strong>Clusters</strong> — topic clustering with auto-labels.</li>
-      <li><strong>Contradictions</strong> — surface opposing claims about the same subject.</li>
-      <li><strong>Thesis pack</strong> — chapter outline, literature matrix, per-chapter bibliographies.</li>
-      <li><strong>Book pack</strong> — long-form scaffold seeded by clusters.</li>
-      <li><strong>Memory graph</strong> — persistent, cross-project research graph.</li>
-    </ul>
-    <p class="muted">Premium seams are present in v3.4.0-beta.1 and raise <code>PremiumNotAvailableError</code> until activated.</p>
-    <p><strong>Pricing is still being set.</strong> Expected: a flat one-time licence, plus optional annual updates. No subscription lock-in, no usage metering.</p>
-    <a class="cta" href="mailto:anastasios.papalias@gmail.com?subject=Corpus Smith%20Premium">Get in touch →</a>
-  </div>
+  <section>
+    <div class="grid grid-2">
 
-  <h2>For institutions</h2>
-  <p>Departmental and library licences are planned once the premium paid build ships. If you represent a research group or institution and want an early conversation, <a href="mailto:anastasios.papalias@gmail.com?subject=Corpus Smith%20Institutional">email me</a>.</p>
+      <div class="pricing-card featured">
+        <div class="price">Free</div>
+        <p>MIT-licensed · forever</p>
+        <ul>
+          <li>All 20 academic sources</li>
+          <li>Title / question → query expansion</li>
+          <li>Trust labels on every record</li>
+          <li>BibTeX, CSL-JSON, annotated Markdown exports</li>
+          <li>Project workspaces with project.toml</li>
+          <li>Beginner onboarding wizard</li>
+          <li>Knowledge dataset builder (JSONL)</li>
+          <li>Zero mandatory dependencies</li>
+        </ul>
+        <a href="install.html" class="btn btn-primary">Install →</a>
+      </div>
 
-  <h2>Why not a subscription?</h2>
-  <p>Scholars already pay subscriptions to more tools than any person should have to remember. Corpus Smith is terminal software that runs on your machine, against public APIs. A one-time licence fits the shape of the tool.</p>
+      <div class="pricing-card">
+        <div class="price">Premium <span class="tag premium">beta</span></div>
+        <p>One-time licence · no subscription</p>
+        <ul>
+          <li>Atlas — citation / co-citation graph</li>
+          <li>Clusters — topic clustering with auto-labels</li>
+          <li>Contradictions — opposing claims detection</li>
+          <li>Thesis pack — chapter outline + lit matrix</li>
+          <li>Book pack — long-form scaffold</li>
+          <li>Memory graph — cross-project knowledge</li>
+        </ul>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;"><strong>Pricing is being set.</strong> Expected: flat one-time licence, plus optional annual updates. No subscription lock-in, no usage metering.</p>
+        <a href="mailto:anastasios.papalias@gmail.com?subject=ScholarForge%20Premium" class="btn btn-secondary">Get in touch →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section>
+    <h2>For institutions</h2>
+    <p>Departmental and library licences are planned once the premium build ships. If you represent a research group or institution and want an early conversation, <a href="mailto:anastasios.papalias@gmail.com?subject=ScholarForge%20Institutional">email me</a>.</p>
+  </section>
+
+  <section>
+    <h2>Why not a subscription?</h2>
+    <div class="card">
+      <p>Scholars already pay subscriptions to more tools than any person should have to remember. ScholarForge is terminal software that runs on your machine, against public APIs. A one-time licence fits the shape of the tool.</p>
+    </div>
+  </section>
+
 </main>
 
 <footer>
-  <a href="sources.html">← Sources</a> · <a href="index.html">Home</a>
+  <span>Built by <a href="https://github.com/AnastasiosPapalias">Anastasios Papalias</a> · Thessaloniki, Greece</span>
+  <div class="footer-links">
+    <a href="sources.html">Sources</a>
+    <a href="index.html">Home</a>
+  </div>
 </footer>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  html.classList.toggle('dark');
+  const isDark = html.classList.contains('dark');
+  localStorage.setItem('sf-theme', isDark ? 'dark' : 'light');
+  document.querySelector('.theme-toggle').textContent = isDark ? '☾' : '☀';
+}
+(function() {
+  const saved = localStorage.getItem('sf-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (saved === 'dark' || (!saved && prefersDark)) {
+    document.documentElement.classList.add('dark');
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.querySelector('.theme-toggle');
+      if (btn) btn.textContent = '☾';
+    });
+  }
+})();
+</script>
+
 </body>
 </html>

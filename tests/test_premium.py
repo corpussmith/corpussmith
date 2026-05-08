@@ -2,8 +2,8 @@
 
 Verifies:
   * every premium entry point raises PremiumNotAvailableError when inactive
-  * activation via CORPUSSMITH_PREMIUM_UNLOCK flips the gate on
-  * CORPUSSMITH_PREMIUM_KEY is honoured
+  * activation via SCHOLARFORGE_PREMIUM_UNLOCK flips the gate on
+  * SCHOLARFORGE_PREMIUM_KEY is honoured
   * ~/.corpussmith.toml [premium] license_key is honoured
   * freemium code does not import premium internals
   * `corpussmith premium` CLI shows status without crashing
@@ -26,7 +26,7 @@ SF = [sys.executable, str(ROOT / "corpussmith.py"), "--no-banner"]
 
 
 def _clear_premium_env(env: dict) -> dict:
-    for k in ("CORPUSSMITH_PREMIUM_KEY", "CORPUSSMITH_PREMIUM_UNLOCK"):
+    for k in ("SCHOLARFORGE_PREMIUM_KEY", "SCHOLARFORGE_PREMIUM_UNLOCK"):
         env.pop(k, None)
     return env
 
@@ -46,13 +46,13 @@ class PremiumGateTests(unittest.TestCase):
         self.assertEqual(premium.get_status().source, "none")
 
     def test_unlock_flag_activates(self) -> None:
-        os.environ["CORPUSSMITH_PREMIUM_UNLOCK"] = "1"
+        os.environ["SCHOLARFORGE_PREMIUM_UNLOCK"] = "1"
         from corpussmith import premium
         self.assertTrue(premium.is_active())
         self.assertEqual(premium.get_status().source, "unlock")
 
     def test_env_key_activates(self) -> None:
-        os.environ["CORPUSSMITH_PREMIUM_KEY"] = "abcd-efgh-ijkl-mnop"
+        os.environ["SCHOLARFORGE_PREMIUM_KEY"] = "abcd-efgh-ijkl-mnop"
         from corpussmith import premium
         status = premium.get_status()
         self.assertTrue(status.active)
@@ -110,7 +110,7 @@ class PremiumGateTests(unittest.TestCase):
     def test_activated_atlas_passes_gate(self) -> None:
         """With unlock, premium entry points pass the gate and reach the
         NotImplementedError placeholder — proving activation flow works."""
-        os.environ["CORPUSSMITH_PREMIUM_UNLOCK"] = "1"
+        os.environ["SCHOLARFORGE_PREMIUM_UNLOCK"] = "1"
         from corpussmith.premium import atlas
         with self.assertRaises(NotImplementedError):
             atlas.build([])
@@ -171,7 +171,7 @@ class PremiumCLITests(unittest.TestCase):
         self.assertIn("atlas", r.stdout)
 
     def test_premium_cli_active_via_unlock(self) -> None:
-        r = self._run("premium", env_extra={"CORPUSSMITH_PREMIUM_UNLOCK": "1"})
+        r = self._run("premium", env_extra={"SCHOLARFORGE_PREMIUM_UNLOCK": "1"})
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertIn("active", r.stdout.lower())
 
