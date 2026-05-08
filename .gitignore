@@ -7,3 +7,12 @@ build/
 .env
 .mypy_cache/
 .ruff_cache/
+# vault-only files — not part of the package
+CorpusSmith.md
+_INDEX.md
+PhD_concept.docx
+# legacy package — delete manually via Windows Explorer
+scholarforge/
+scholarforge.py
+# harvest test artifacts
+corpussmith_harvest_*/
