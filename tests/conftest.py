@@ -45,4 +45,4 @@ def _block_real_openalex(monkeypatch):
 @pytest.fixture(autouse=True)
 def _isolate_concept_cache(tmp_path, monkeypatch):
     """Redirect the local concept cache to a per-test temp directory."""
-    monkeypatch.setenv("SCHOLARFORGE_CACHE_DIR", str(tmp_path / "sf_cache"))
+    monkeypatch.setenv("CORPUSSMITH_CACHE_DIR", str(tmp_path / "sf_cache"))

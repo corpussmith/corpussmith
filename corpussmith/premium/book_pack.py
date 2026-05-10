@@ -42,8 +42,12 @@ def export(
                    style=style)
 
 
-def _render(records, **_) -> BookPackResult:  # pragma: no cover
-    raise NotImplementedError("book pack renderer is shipped in the paid build")
+def _render(records, **kw) -> BookPackResult:  # pragma: no cover
+    try:
+        from corpussmith_premium.book_pack import _render as _real
+        return _real(records, **kw)
+    except ImportError:
+        raise NotImplementedError("book pack renderer is shipped in the paid build")
 
 
 __all__ = ["BookPackResult", "export"]

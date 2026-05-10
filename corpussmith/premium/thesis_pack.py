@@ -40,8 +40,12 @@ def export(
                    output_dir=output_dir, style=style)
 
 
-def _render(records, **_) -> ThesisPackResult:  # pragma: no cover
-    raise NotImplementedError("thesis pack renderer is shipped in the paid build")
+def _render(records, **kw) -> ThesisPackResult:  # pragma: no cover
+    try:
+        from corpussmith_premium.thesis_pack import _render as _real
+        return _real(records, **kw)
+    except ImportError:
+        raise NotImplementedError("thesis pack renderer is shipped in the paid build")
 
 
 __all__ = ["ThesisPackResult", "export"]

@@ -83,6 +83,7 @@ class WizardAnswers:
     recency: str = "any"
     trust_floor: str = "any"
     languages: List[str] = None  # type: ignore[assignment]
+    brief_path: str = ""
 
     def __post_init__(self) -> None:
         if self.languages is None:
@@ -228,6 +229,13 @@ def run_wizard(
     else:
         languages = [c.strip() for c in lang_key.split(",") if c.strip()]
 
+    # 8. Research brief (optional)
+    brief_path = ""
+    if _ask_yes_no(stdin, stdout,
+                   "Do you have a research brief (PDF, DOCX, or Markdown)?",
+                   default=False):
+        brief_path = _ask(stdin, stdout, "Path to your research brief", default="")
+
     answers = WizardAnswers(
         name=name,
         research_goal=goal,
@@ -236,6 +244,7 @@ def run_wizard(
         recency=recency,
         trust_floor=trust,
         languages=languages,
+        brief_path=brief_path,
     )
 
     stdout.write("\nHere's what I'll set up:\n")

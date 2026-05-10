@@ -4,6 +4,45 @@ All notable changes to Corpus Smith are documented here.
 
 ---
 
+## v3.5.0-beta.1 (2026-05-08)
+
+### Added
+- **Stage 10 — Research-brief ingest.** `corpussmith search --from <file>` seeds
+  a full harvest from any PDF, DOCX, Markdown, or plain-text research brief.
+  The wizard now optionally asks for a brief at project creation time.
+  `import` writes `.extracted.txt` sidecars for single-document imports.
+  New module: `corpussmith/search/brief.py`.
+- **Stage 11 — OpenAlex concept enrichment.** After query expansion, the top 5
+  OpenAlex works matching the title are fetched; concepts appearing in ≥2 papers
+  with avg score ≥0.30 are promoted as the primary query signal. Per-source query
+  templates emitted: PubMed MeSH, OpenAlex `concepts.id` filter, arXiv phrase
+  query. `--no-enrich` flag for offline use. New module: `corpussmith/search/enrich.py`.
+- **Stage 11c — Local concept cache.** TF-IDF nearest-neighbour cache for
+  enrichment results — searches return instantly after the first run on a topic.
+  Stored as JSONL under `~/.corpussmith/concept_cache.jsonl`.
+  New module: `corpussmith/search/concept_cache.py`.
+- **Stage 12 — NLM MeSH descriptor validation.** Every PubMed concept term is
+  validated against NLM's controlled vocabulary via the lookup API. Exact and
+  contains-fallback matching; auto-canonicalisation; in-memory cache; graceful
+  offline degradation. New module: `corpussmith/search/mesh.py`.
+- **Stage 13 — `corpussmith cache` CLI verb.** `stats`, `clear`, `show <title>`,
+  and `export <path>` (JSONL or CSV) for the local concept cache.
+
+### Changed
+- `query_expansion.py`: enrichment concepts now produce per-source queries in
+  `QueryPlan.per_source_queries`; `QueryPlan.pretty()` shows enrichment section.
+- `lexicon.py`: whole-word boundary matching in bundle seed lookup.
+- `title_parser.py`: two-pass salient-phrase extraction (verbatim recurrence
+  first, then content-word runs) for more stable phrase ranking.
+- `onboarding.py`: wizard asks for optional research-brief path.
+- Premium stubs: all six unimplemented features delegate to
+  `corpussmith_premium.*` when the private wheel is installed.
+
+### Tests
+- Suite expanded from 95 to **177 passing, 2 skipped**.
+
+---
+
 ## v3.4.0-beta.1 (2026-04-23)
 
 ### Changed

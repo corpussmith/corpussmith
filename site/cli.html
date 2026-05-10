@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CLI reference — ScholarForge</title>
+<title>CLI reference — CorpusSmith</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <nav>
   <div class="nav-inner">
-    <a href="index.html" class="brand">scholarforge</a>
+    <a href="index.html" class="brand">corpussmith</a>
     <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
     <div class="nav-links">
       <a href="features.html">Features</a>
@@ -19,7 +19,7 @@
       <a href="sources.html">Sources</a>
       <a href="pricing.html">Pricing</a>
       <span class="spacer"></span>
-      <a href="https://github.com/AnastasiosPapalias/Python/tree/main/scholarforge">GitHub</a>
+      <a href="https://github.com/corpussmith/corpussmith">GitHub</a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀</button>
     </div>
   </div>
@@ -29,14 +29,14 @@
 
   <section>
     <div class="kicker">CLI reference</div>
-    <h1>Seven verbs. That's all.</h1>
-    <p class="hero-sub">Every command accepts <code>--project DIR</code>. If omitted, ScholarForge walks up from the current directory to find the nearest project root.</p>
+    <h1>Nine verbs. That's all.</h1>
+    <p class="hero-sub">Every command accepts <code>--project DIR</code>. If omitted, CorpusSmith walks up from the current directory to find the nearest project root.</p>
   </section>
 
   <section>
     <h2>new</h2>
     <p>Create a research project. On a TTY with no flags, launches the wizard.</p>
-    <pre><code>scholarforge new [DIR]
+    <pre><code>corpussmith new [DIR]
     [--wizard | --skip-wizard]
     [--name NAME]
     [--kind thesis|article|book|exploration]
@@ -49,26 +49,28 @@
 
   <section>
     <h2>search</h2>
-    <p>Paste a title or question. ScholarForge expands it and harvests every source.</p>
-    <pre><code>scholarforge search [--project DIR] "title or question"
+    <p>Paste a title or question. CorpusSmith expands it and harvests every source.</p>
+    <pre><code>corpussmith search [--project DIR] "title or question"
     [--max-results N]       # default 25 per source
     [--min-score N]         # default 10
     [--no-download]         # metadata only
     [--dry-run]             # show query plan only
     [--multilingual]        # expand into other languages
-    [--recent]              # bias toward recent years</code></pre>
+    [--recent]              # bias toward recent years
+    [--from FILE]           # seed from a PDF/DOCX/MD/TXT brief
+    [--no-enrich]           # skip OpenAlex concept lookup</code></pre>
   </section>
 
   <section>
     <h2>import</h2>
     <p>Copy your own files into the project corpus.</p>
-    <pre><code>scholarforge import [--project DIR] SOURCE_DIR</code></pre>
+    <pre><code>corpussmith import [--project DIR] SOURCE_DIR</code></pre>
   </section>
 
   <section>
     <h2>build</h2>
     <p>Extract, chunk, and hash every document into a JSONL dataset.</p>
-    <pre><code>scholarforge build [--project DIR]
+    <pre><code>corpussmith build [--project DIR]
     [--chunk-size N]        # default 3500 chars
     [--overlap N]           # default 350 chars
     [--source corpus|downloads|all]</code></pre>
@@ -77,7 +79,7 @@
   <section>
     <h2>export</h2>
     <p>Provenance-aware bibliography in three formats.</p>
-    <pre><code>scholarforge export [--project DIR] --format bibtex|csljson|markdown
+    <pre><code>corpussmith export [--project DIR] --format bibtex|csljson|markdown
     [--output PATH]
     [--title "..."]         # Markdown only</code></pre>
   </section>
@@ -85,21 +87,30 @@
   <section>
     <h2>review-project</h2>
     <p>Terminal report of the current project state.</p>
-    <pre><code>scholarforge review-project [--project DIR]</code></pre>
+    <pre><code>corpussmith review-project [--project DIR]</code></pre>
+  </section>
+
+  <section>
+    <h2>cache</h2>
+    <p>Inspect, probe, and clear the local concept cache.</p>
+    <pre><code>corpussmith cache stats                  # record count and health
+corpussmith cache clear [--yes]          # delete all cached records
+corpussmith cache show "probe title"     # find nearest cached match
+corpussmith cache export PATH            # dump as JSONL or CSV</code></pre>
   </section>
 
   <section>
     <h2>config</h2>
     <p>Inspect or initialise the global config.</p>
-    <pre><code>scholarforge config                # show current key status
-scholarforge config --init         # write a commented template</code></pre>
+    <pre><code>corpussmith config                # show current key status
+corpussmith config --init         # write a commented template</code></pre>
   </section>
 
   <section>
     <h2>premium <span class="tag premium">v3.4+</span></h2>
     <p>Premium activation status and feature listing.</p>
-    <pre><code>scholarforge premium               # show status
-scholarforge premium --features    # list available seams</code></pre>
+    <pre><code>corpussmith premium               # show status
+corpussmith premium --features    # list available seams</code></pre>
   </section>
 
   <hr class="divider">

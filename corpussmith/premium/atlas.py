@@ -50,8 +50,12 @@ def build(
                         min_degree=min_degree, output=output)
 
 
-def _build_graph(records, **_) -> AtlasResult:  # pragma: no cover
-    raise NotImplementedError("atlas graph builder is shipped in the paid build")
+def _build_graph(records, **kw) -> AtlasResult:  # pragma: no cover
+    try:
+        from corpussmith_premium.atlas import _build_graph as _real
+        return _real(records, **kw)
+    except ImportError:
+        raise NotImplementedError("atlas graph builder is shipped in the paid build")
 
 
 __all__ = ["AtlasResult", "build"]

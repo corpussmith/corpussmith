@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "corpussmith"
-version = "3.4.0-beta.1"
+version = "3.5.0-beta.1"
 description = "Corpus Smith is a Python-based scholarly research workbench for building trusted research corpora, collecting academic sources, managing references, and preparing citation-ready research material."
 readme = "README.md"
 license = { text = "MIT" }
-authors = [{ name = "Anastasios Papalias" }]
+authors = [{ name = "Anastasios Papalias", email = "info@corpussmith.dev" }]
 requires-python = ">=3.8"
 keywords = [
   "research", "academic", "corpus", "citations", "bibliography",
@@ -30,10 +30,11 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
-pdf  = ["pypdf>=3.0"]
-docx = ["python-docx>=1.0"]
-full = ["pypdf>=3.0", "python-docx>=1.0"]
-dev  = ["pytest>=7"]
+pdf      = ["pypdf>=3.0"]
+docx     = ["python-docx>=1.0"]
+security = ["defusedxml>=0.7"]
+full     = ["pypdf>=3.0", "python-docx>=1.0", "defusedxml>=0.7"]
+dev      = ["pytest>=7"]
 
 [project.scripts]
 corpussmith = "corpussmith.app.cli:main"

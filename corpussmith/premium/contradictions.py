@@ -46,8 +46,12 @@ def scan(
                         subject_filter=subject_filter)
 
 
-def _run_scanner(records, **_) -> ContradictionReport:  # pragma: no cover
-    raise NotImplementedError("contradictions scanner is shipped in the paid build")
+def _run_scanner(records, **kw) -> ContradictionReport:  # pragma: no cover
+    try:
+        from corpussmith_premium.contradictions import _run_scanner as _real
+        return _real(records, **kw)
+    except ImportError:
+        raise NotImplementedError("contradictions scanner is shipped in the paid build")
 
 
 __all__ = ["Contradiction", "ContradictionReport", "scan"]

@@ -1,6 +1,6 @@
-# ScholarForge — Beta Tester Guide
+# Corpus Smith — Beta Tester Guide
 
-Thank you for testing ScholarForge. This guide walks you through installation and first use on **Windows 11**. It assumes no prior experience with Python or the terminal.
+Thank you for testing Corpus Smith. This guide walks you through installation and first use on **Windows 11**. It assumes no prior experience with Python or the terminal.
 
 ---
 
@@ -37,16 +37,16 @@ You should see something like `git version 2.44.0`.
 
 ---
 
-## Step 3 — Install ScholarForge
+## Step 3 — Install Corpus Smith
 
 Open **Command Prompt** (search for it in the Start menu) and run these commands one by one. Copy and paste each line, then press Enter and wait for it to finish before typing the next.
 
 ```
-git clone https://github.com/AnastasiosPapalias/Python.git
+git clone https://github.com/corpussmith/corpussmith.git
 ```
 
 ```
-cd Python\scholarforge
+cd corpussmith
 ```
 
 ```
@@ -57,15 +57,15 @@ pip install -e .
 pip install pypdf python-docx
 ```
 
-This downloads ScholarForge and installs it. It only needs to be done once.
+This downloads Corpus Smith and installs it. It only needs to be done once.
 
 To verify:
 
 ```
-scholarforge --version
+corpussmith --version
 ```
 
-You should see `ScholarForge 3.4.0-beta.1` (or similar).
+You should see `Corpus Smith 3.5.0-beta.1` (or similar).
 
 ---
 
@@ -84,10 +84,10 @@ mkdir my-research
 ```
 
 ```
-scholarforge new my-research
+corpussmith new my-research
 ```
 
-ScholarForge will start a wizard and ask you a few plain-English questions:
+Corpus Smith will start a wizard and ask you a few plain-English questions:
 - Your project name
 - What you are researching (one sentence)
 - Your research field
@@ -105,16 +105,16 @@ Press **Enter** to accept the default shown in brackets, or type your answer.
 After creating the project, run a search. Paste your research topic or a full paper title — no need to use keywords.
 
 ```
-scholarforge search --project %USERPROFILE%\Desktop\my-research "your research topic or question here"
+corpussmith search --project %USERPROFILE%\Desktop\my-research "your research topic or question here"
 ```
 
 Example:
 
 ```
-scholarforge search --project %USERPROFILE%\Desktop\my-research "effects of microplastics on marine invertebrate reproduction"
+corpussmith search --project %USERPROFILE%\Desktop\my-research "effects of microplastics on marine invertebrate reproduction"
 ```
 
-ScholarForge will search 20 academic databases simultaneously. This takes 1–3 minutes depending on your internet connection. Downloaded PDFs will appear in the `downloads/` folder inside your project.
+Corpus Smith will search 20 academic databases simultaneously. This takes 1–3 minutes depending on your internet connection. Downloaded PDFs will appear in the `downloads\` folder inside your project.
 
 ---
 
@@ -123,16 +123,16 @@ ScholarForge will search 20 academic databases simultaneously. This takes 1–3 
 After searching, you can export a bibliography:
 
 ```
-scholarforge export --project %USERPROFILE%\Desktop\my-research --format bibtex
+corpussmith export --project %USERPROFILE%\Desktop\my-research --format bibtex
 ```
 
 Or as a readable Markdown file:
 
 ```
-scholarforge export --project %USERPROFILE%\Desktop\my-research --format markdown
+corpussmith export --project %USERPROFILE%\Desktop\my-research --format markdown
 ```
 
-The file will appear in the `exports/` folder inside your project.
+The file will appear in the `exports\` folder inside your project.
 
 ---
 
@@ -141,7 +141,7 @@ The file will appear in the `exports/` folder inside your project.
 At any time, you can see a summary of what your project contains:
 
 ```
-scholarforge review-project --project %USERPROFILE%\Desktop\my-research
+corpussmith review-project --project %USERPROFILE%\Desktop\my-research
 ```
 
 ---
@@ -167,16 +167,20 @@ If anything goes wrong or looks unexpected, please note:
 2. The error message shown (a screenshot works fine)
 3. What you expected to happen
 
-Send these to Anastasios. Every bug report helps — even "this was confusing" is useful feedback.
+Send these to [info@corpussmith.dev](mailto:info@corpussmith.dev). Every bug report helps — even "this was confusing" is useful feedback.
 
 ---
 
 ## Tips
 
-- You can run `scholarforge` in any folder — it works from anywhere once installed
+- You can run `corpussmith` in any folder — it works from anywhere once installed
 - The search accepts full sentences, not just keywords — try pasting a paper title directly
 - Press Ctrl+C at any time to cancel a running command
 
+## Security note
+
+Corpus Smith downloads PDFs and other files from academic repositories. It only follows `https://` links and limits individual file reads to 10 MB. Do **not** open ZIP archives or executable files you did not explicitly request — Corpus Smith never asks you to open one.
+
 ---
 
-*ScholarForge v3.4.0-beta.1 — Thank you for your time.*
+*Corpus Smith v3.5.0-beta.1 — Thank you for your time.*

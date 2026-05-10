@@ -114,12 +114,12 @@ class CacheLookupTests(unittest.TestCase):
                _mk_result(TRUFFLE_CONCEPTS))
 
     def test_returns_none_when_cache_empty(self):
-        os.environ["SCHOLARFORGE_CACHE_DIR"] = "/tmp/sf_test_empty_cache_xyz"
+        os.environ["CORPUSSMITH_CACHE_DIR"] = "/tmp/sf_test_empty_cache_xyz"
         try:
             result = lookup("anything", min_cache_records=1)
             self.assertIsNone(result)
         finally:
-            del os.environ["SCHOLARFORGE_CACHE_DIR"]
+            del os.environ["CORPUSSMITH_CACHE_DIR"]
 
     def test_close_match_returns_concepts(self):
         result = lookup("Non-pharmacological treatments for ADHD in adults",

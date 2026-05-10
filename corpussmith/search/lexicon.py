@@ -65,17 +65,33 @@ def load_all() -> Dict[str, Dict]:
     return _CACHE
 
 
+def _seed_matches_term(seed: str, term: str) -> bool:
+    """True when all words of *seed* appear as whole words in *term*.
+
+    This is intentionally one-directional: a single-word input term cannot
+    drag in a multi-word seed that happens to share one of its words.
+    """
+    seed_s = _slug(seed)
+    term_s = _slug(term)
+    if seed_s == term_s:
+        return True
+    for word in seed_s.split():
+        if not re.search(r"\b" + re.escape(word) + r"\b", term_s):
+            return False
+    return True
+
+
 def find_bundles(terms: List[str]) -> List[List[str]]:
     """For each matched seed, return a bundle of synonyms/related terms.
 
-    Matching is case + accent insensitive. A lexicon seed matches if its slug
-    appears as a substring of any input term's slug, or vice versa.
+    Matching is case + accent insensitive. All words of a seed must appear as
+    whole words inside an input term (not the reverse) to prevent a short
+    input word from dragging in an unrelated multi-word seed.
     """
     lex = load_all()
     if not lex:
         return []
 
-    term_slugs = [_slug(t) for t in terms if t]
     bundles: List[List[str]] = []
     seen_seeds = set()
 
@@ -85,10 +101,7 @@ def find_bundles(terms: List[str]) -> List[List[str]]:
             seed_slug = _slug(seed)
             if seed_slug in seen_seeds:
                 continue
-            matched = any(
-                seed_slug in ts or ts in seed_slug
-                for ts in term_slugs if ts
-            )
+            matched = any(_seed_matches_term(seed_slug, _slug(t)) for t in terms if t)
             if matched:
                 seen_seeds.add(seed_slug)
                 bundle = [seed] + [s for s in synonyms if s]
@@ -125,4 +138,4 @@ def multilingual_for(terms: List[str]) -> List[str]:
     return out
 
 
-__all__ = ["load_all", "find_bundles", "multilingual_for"]
+__all__ = ["load_all", "find_bundles", "multilingual_for", "_seed_matches_term"]

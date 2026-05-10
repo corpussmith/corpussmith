@@ -86,24 +86,51 @@ def _ngrams(tokens: List[str], n: int) -> List[str]:
 def salient_phrases(raw: str, max_phrases: int = 6) -> List[str]:
     """Extract multi-word phrases that look meaningful.
 
-    Algorithm:
-      1. Split original text into sentences/clauses on punctuation.
-      2. Within each clause, find runs of consecutive content words.
-      3. Keep 2- and 3-grams from those runs.
-      4. De-duplicate, prefer longer phrases, cap at `max_phrases`.
+    Two-pass algorithm:
+      Pass 1 \u2014 verbatim recurrence: find n-grams (including stopwords) that
+               appear \u2265 2 times in the text. These are ranked first because
+               the author chose to repeat them deliberately.
+      Pass 2 \u2014 content-word runs: consecutive content-word n-grams, ranked
+               by length then token frequency.
     """
     s = (raw or "").strip()
     if not s:
         return []
 
-    clauses = re.split(r"[.!?;:,\u2014\u2013]+", s)
+    s_lower = s.lower()
+    all_tokens = re.findall(r"[\w]+", s, flags=re.UNICODE)
 
-    phrases: List[str] = []
-    seen = set()
+    # \u2500\u2500 Pass 1: verbatim recurring n-grams \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+    recurring: List[Tuple[int, str]] = []  # (count, phrase)
+    seen_recurring: set = set()
+    for n in (2, 3, 4):
+        for i in range(len(all_tokens) - n + 1):
+            ng = " ".join(all_tokens[i:i + n])
+            key = ng.lower()
+            if key in seen_recurring:
+                continue
+            # must contain at least one real content word
+            if not any(
+                t.lower() not in _STOPWORDS and len(t) >= 3
+                for t in all_tokens[i:i + n]
+            ):
+                continue
+            count = len(re.findall(re.escape(key), s_lower))
+            if count >= 2:
+                seen_recurring.add(key)
+                recurring.append((count, ng))
+
+    # Sort by count desc, then phrase length desc.
+    recurring.sort(key=lambda x: (-x[0], -len(x[1].split())))
+
+    # \u2500\u2500 Pass 2: content-word runs (original algorithm) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+    clauses = re.split(r"[.!?;:,\u2014\u2013]+", s)
+    run_phrases: List[str] = []
+    seen_run: set = set()
     for clause in clauses:
         words = re.findall(r"[\w]+", clause, flags=re.UNICODE)
         run: List[str] = []
-        for w in words + [""]:  # sentinel flushes the run
+        for w in words + [""]:
             lw = w.lower()
             is_content = (
                 len(w) >= 3 and not w.isdigit()
@@ -117,18 +144,34 @@ def salient_phrases(raw: str, max_phrases: int = 6) -> List[str]:
                     for n in (3, 2):
                         for ng in _ngrams(run, n):
                             key = ng.lower()
-                            if key not in seen:
-                                seen.add(key)
-                                phrases.append(ng)
+                            if key not in seen_run:
+                                seen_run.add(key)
+                                run_phrases.append(ng)
                 run = []
 
-    # Score: longer phrases first, then by content-word frequency.
     counter = Counter(content_words(raw))
-    def score(p: str) -> Tuple[int, int]:
+
+    def run_score(p: str) -> Tuple[int, int]:
         toks = p.split()
         return (len(toks), sum(counter.get(t.lower(), 0) for t in toks))
-    phrases.sort(key=score, reverse=True)
-    return phrases[:max_phrases]
+
+    run_phrases.sort(key=run_score, reverse=True)
+
+    # \u2500\u2500 Merge: recurring first, then run-phrases (no duplicates) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+    out: List[str] = []
+    seen_out: set = set()
+    for _count, phrase in recurring:
+        key = phrase.lower()
+        if key not in seen_out:
+            seen_out.add(key)
+            out.append(phrase)
+    for phrase in run_phrases:
+        key = phrase.lower()
+        if key not in seen_out:
+            seen_out.add(key)
+            out.append(phrase)
+
+    return out[:max_phrases]
 
 
 def parse(raw: str) -> ParsedTitle:

@@ -26,6 +26,7 @@ Corpus Smith is a terminal-based scholarly research workbench. It is **not** an 
 | `corpussmith build` | Extract and chunk all corpus documents into a knowledge dataset |
 | `corpussmith export` | Export bibliography as BibTeX, CSL-JSON, or annotated Markdown |
 | `corpussmith review-project` | Terminal report of your project state |
+| `corpussmith cache` | Inspect, probe, and clear the local concept cache |
 
 **Key differentiators:**
 - Natural-language search — paste a full research title or question, no keyword tuning needed
@@ -236,6 +237,12 @@ Commands:
 
   review-project [--project DIR]
 
+  cache [stats|clear|show TITLE|export PATH]
+    stats                     Record count, top domains, cache health
+    clear [--yes]             Delete all cached concept records
+    show TITLE                Find nearest cached match for a probe title
+    export PATH               Dump cache as JSONL or CSV (.csv extension)
+
   config [--init]             Manage API keys and global settings
 
   premium                     Show premium feature activation status
@@ -305,6 +312,15 @@ corpussmith config
 ---
 
 ## Changelog
+
+### v3.5.0-beta.1 (2026-05-08)
+- OpenAlex concept enrichment: cross-paper concept signal replaces hand-curated lexicons as primary query seed (Stage 11)
+- Local concept cache with TF-IDF nearest-neighbour lookup — searches warm up instantly after the first run (Stage 11c)
+- NLM MeSH descriptor validation — every PubMed term validated against NLM's controlled vocabulary, auto-canonicalised (Stage 12)
+- `corpussmith cache` — new CLI verb: `stats / clear / show / export` for the concept cache (Stage 13)
+- Research-brief ingest — `search --from <file>` seeds a harvest from any PDF/DOCX/MD/TXT (Stage 10)
+- Per-source query templates: PubMed MeSH query, OpenAlex `concepts.id` filter, arXiv phrase query
+- 177-test suite (up from 95)
 
 ### v3.4.0-beta.1 (2026-04-23)
 - **Renamed project from ScholarForge to Corpus Smith** (see Migration Note below)

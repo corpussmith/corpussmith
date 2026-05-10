@@ -108,12 +108,20 @@ class PremiumGateTests(unittest.TestCase):
             memory_graph.query("x")
 
     def test_activated_atlas_passes_gate(self) -> None:
-        """With unlock, premium entry points pass the gate and reach the
-        NotImplementedError placeholder — proving activation flow works."""
+        """With unlock, premium entry points pass the gate.
+        If corpussmith_premium is installed the call succeeds;
+        if not, NotImplementedError is raised (never PremiumNotAvailableError)."""
         os.environ["SCHOLARFORGE_PREMIUM_UNLOCK"] = "1"
-        from corpussmith.premium import atlas
-        with self.assertRaises(NotImplementedError):
-            atlas.build([])
+        from corpussmith.premium import atlas, PremiumNotAvailableError
+        try:
+            result = atlas.build([])
+            # Premium package installed — call succeeded
+            self.assertIsNotNone(result)
+        except NotImplementedError:
+            # Premium package not installed — delegation stub raised correctly
+            pass
+        except PremiumNotAvailableError:
+            self.fail("Gate should be open with SCHOLARFORGE_PREMIUM_UNLOCK=1")
 
 
 class FreemiumPurityTests(unittest.TestCase):

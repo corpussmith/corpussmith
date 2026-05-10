@@ -84,7 +84,10 @@ from datetime import datetime
 from pathlib import Path
 from textwrap import wrap
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
-from xml.etree import ElementTree as ET
+try:
+    import defusedxml.ElementTree as ET  # type: ignore[import]
+except ImportError:
+    from xml.etree import ElementTree as ET  # type: ignore[assignment]
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Optional third-party imports
@@ -939,7 +942,7 @@ def request_with_retry(
         try:
             req = urllib.request.Request(full_url, headers=req_headers)
             with urllib.request.urlopen(req, timeout=timeout) as resp:
-                data = resp.read()
+                data = resp.read(10 * 1024 * 1024)
                 text = data.decode("utf-8", errors="ignore")
                 if expect_json:
                     return json.loads(text)
@@ -1931,10 +1934,11 @@ def inspect_remote_file(url: str) -> Tuple[str, str]:
 
 
 def choose_download_url(record: HarvestRecord) -> str:
-    for candidate in [record.pdf_url, record.open_access_url]:
-        if candidate and candidate.startswith("http"):
-            return candidate
-    return ""
+    https = [c for c in [record.pdf_url, record.open_access_url]
+             if c and c.startswith("https://")]
+    http  = [c for c in [record.pdf_url, record.open_access_url]
+             if c and c.startswith("http://")]
+    return (https or http or [""])[0]
 
 
 def should_download(record: HarvestRecord) -> Tuple[bool, str]:
@@ -2055,9 +2059,11 @@ def read_plain_text(path: Path) -> str:
 
 
 def strip_html(raw: str) -> str:
-    raw = re.sub(r"(?is)<script.*?>.*?</script>", " ", raw)
-    raw = re.sub(r"(?is)<style.*?>.*?</style>",  " ", raw)
-    raw = re.sub(r"(?s)<[^>]+>", " ", raw)
+    if len(raw) > 2 * 1024 * 1024:
+        raw = raw[:2 * 1024 * 1024]
+    raw = re.sub(r"(?is)<script[^>]*>.*?</script>", " ", raw)
+    raw = re.sub(r"(?is)<style[^>]*>.*?</style>",   " ", raw)
+    raw = re.sub(r"<[^>]{1,2000}>", " ", raw)
     return clean_forge_text(raw)
 
 
@@ -2226,7 +2232,12 @@ def run_harvest(
     max_downloads: int = 100,
     skip_download: bool = False,
     verbose: bool = False,
+    per_source_overrides: Dict[str, str] = None,
 ) -> Dict[str, Any]:
+    # per_source_overrides maps logical query keys to the biomedical source family:
+    #   "pubmed" → PubMed, PMC Full-Text, Europe PMC
+    # When supplied, the override query replaces the default subject-based query
+    # for sources in that family.
     """Core harvest pipeline. Returns a summary dict."""
     dirs = ensure_dirs(output_dir)
 

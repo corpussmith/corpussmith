@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ScholarForge — the provenance-first scholarly research workspace</title>
+<title>CorpusSmith — the provenance-first scholarly research workspace</title>
 <meta name="description" content="Terminal-based scholarly research workbench. Harvest 20 academic APIs, build trustworthy corpora, prepare writing-ready exports.">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -11,7 +11,7 @@
 
 <nav>
   <div class="nav-inner">
-    <a href="index.html" class="brand">scholarforge</a>
+    <a href="index.html" class="brand">corpussmith</a>
     <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
     <div class="nav-links">
       <a href="features.html">Features</a>
@@ -20,7 +20,7 @@
       <a href="sources.html">Sources</a>
       <a href="pricing.html">Pricing</a>
       <span class="spacer"></span>
-      <a href="https://github.com/AnastasiosPapalias/Python/tree/main/scholarforge">GitHub</a>
+      <a href="https://github.com/AnastasiosPapalias/corpussmith">GitHub</a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle dark mode">☀</button>
     </div>
   </div>
@@ -32,11 +32,11 @@
   <section>
     <div class="kicker">v3.4.0-beta.1 · MIT · Python 3.8+</div>
     <h1>The provenance-first scholarly research workspace</h1>
-    <p class="hero-sub">Paste a title or a question. ScholarForge expands it deterministically, harvests twenty academic sources, labels the trust of every record, and hands you a writing-ready export. No AI wrapper. No account. No lock-in.</p>
+    <p class="hero-sub">Paste a title or a question. CorpusSmith expands it deterministically, harvests twenty academic sources, labels the trust of every record, and hands you a writing-ready export. No AI wrapper. No account. No lock-in.</p>
 
     <div class="btn-group">
       <a href="install.html" class="btn btn-primary">Get Started</a>
-      <a href="https://github.com/AnastasiosPapalias/Python/tree/main/scholarforge" class="btn btn-secondary">GitHub</a>
+      <a href="https://github.com/AnastasiosPapalias/corpussmith" class="btn btn-secondary">GitHub</a>
     </div>
 
     <div class="install-block">
@@ -57,7 +57,7 @@
 
     <div class="command-row">
       <div class="command-code">
-        <pre><code>$ scholarforge new my-thesis</code></pre>
+        <pre><code>$ corpussmith new my-thesis</code></pre>
       </div>
       <div class="command-desc">
         <h3>Create a project</h3>
@@ -67,19 +67,19 @@
 
     <div class="command-row">
       <div class="command-code">
-        <pre><code>$ scholarforge search \
+        <pre><code>$ corpussmith search \
   --project my-thesis \
   "neural correlates of OCD"</code></pre>
       </div>
       <div class="command-desc">
         <h3>Harvest sources</h3>
-        <p>ScholarForge classifies your input, expands it into a query plan, and harvests 20 academic APIs in parallel. Every record gets a trust label.</p>
+        <p>CorpusSmith classifies your input, expands it into a query plan, and harvests 20 academic APIs in parallel. Every record gets a trust label.</p>
       </div>
     </div>
 
     <div class="command-row">
       <div class="command-code">
-        <pre><code>$ scholarforge export \
+        <pre><code>$ corpussmith export \
   --project my-thesis \
   --format bibtex</code></pre>
       </div>
@@ -91,7 +91,7 @@
 
     <div class="command-row">
       <div class="command-code">
-        <pre><code>$ scholarforge build \
+        <pre><code>$ corpussmith build \
   --project my-thesis</code></pre>
       </div>
       <div class="command-desc">
@@ -159,7 +159,7 @@
 <footer>
   <span>Built by <a href="https://github.com/AnastasiosPapalias">Anastasios Papalias</a> · Thessaloniki, Greece</span>
   <div class="footer-links">
-    <a href="https://github.com/AnastasiosPapalias/Python/tree/main/scholarforge">Source</a>
+    <a href="https://github.com/AnastasiosPapalias/corpussmith">Source</a>
     <a href="install.html">Install</a>
     <a href="pricing.html">Pricing</a>
   </div>
@@ -168,7 +168,7 @@
 <script>
 const installs = {
   pip: 'pip install -e .',
-  git: 'git clone https://github.com/AnastasiosPapalias/Python.git && cd Python/scholarforge && pip install -e .'
+  git: 'git clone https://github.com/AnastasiosPapalias/corpussmith.git && cd corpussmith && pip install -e .'
 };
 
 function switchInstall(key, btn) {

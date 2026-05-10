@@ -44,8 +44,12 @@ def cluster(
                           min_cluster_size=min_cluster_size, language=language)
 
 
-def _run_clusterer(records, **_) -> ClusterResult:  # pragma: no cover
-    raise NotImplementedError("clusterer is shipped in the paid build")
+def _run_clusterer(records, **kw) -> ClusterResult:  # pragma: no cover
+    try:
+        from corpussmith_premium.clusters import _run_clusterer as _real
+        return _real(records, **kw)
+    except ImportError:
+        raise NotImplementedError("clusterer is shipped in the paid build")
 
 
 __all__ = ["Cluster", "ClusterResult", "cluster"]

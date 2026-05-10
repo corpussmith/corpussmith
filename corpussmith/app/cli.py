@@ -23,7 +23,7 @@ from typing import List, Optional
 import corpussmith as _pkg
 
 
-NEW_VERBS = {"new", "search", "search-draft", "search_draft", "import", "build", "review-project", "review_project", "export", "config", "premium"}
+NEW_VERBS = {"new", "search", "search-draft", "search_draft", "import", "build", "review-project", "review_project", "export", "config", "premium", "cache"}
 
 # Global flags that can precede a new verb without breaking dispatch.
 # These mirror the legacy top-level flags so invocations like
@@ -59,6 +59,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             "export": _cmd_export,
             "config": _cmd_config,
             "premium": _cmd_premium,
+            "cache": _cmd_cache,
         }[verb]
         return handler(rest)
 
@@ -189,9 +190,32 @@ def _cmd_search(argv: List[str]) -> int:
     max_results = int(_pop_option(argv, "--max-results", default="25") or 25)
     min_score = float(_pop_option(argv, "--min-score", default="10") or 10)
     skip_download = _pop_flag(argv, "--no-download")
+    brief_from = _pop_option(argv, "--from")
 
     project = _resolve_project(argv)
-    raw = " ".join(argv).strip()
+
+    if brief_from:
+        from corpussmith.search.brief import extract, BriefExtractionError
+        brief_path = Path(brief_from).expanduser().resolve()
+        try:
+            brief = extract(brief_path)
+        except BriefExtractionError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        print(f"Loaded research brief: {brief.title}")
+        raw = brief.seed_text
+
+        # Copy brief into corpus/
+        corpus_dir = project.root / "corpus"
+        corpus_dir.mkdir(exist_ok=True)
+        import shutil
+        dest_brief = corpus_dir / f"brief{brief_path.suffix}"
+        shutil.copy2(str(brief_path), str(dest_brief))
+        extracted_path = corpus_dir / "brief.extracted.txt"
+        extracted_path.write_text(brief.seed_text, encoding="utf-8")
+    else:
+        raw = " ".join(argv).strip()
+
     if not raw:
         print("error: provide a title, question, or keyword list", file=sys.stderr)
         return 1
@@ -210,8 +234,6 @@ def _cmd_search(argv: List[str]) -> int:
         print("\n--dry-run: not executing harvest")
         return 0
 
-    # Hand off to the legacy harvest runner. We pass the expanded subjects
-    # string so the existing 20-source pipeline does the actual network work.
     from corpussmith._legacy import run_harvest, _print_harvest_final
     subjects = plan.as_subject_strings()
     print(f"\nrunning harvest with {len(subjects)} subject(s): {subjects}")
@@ -609,6 +631,129 @@ def _cmd_premium(argv: List[str]) -> int:
             mark = "✓" if status.active else "·"
             print(f"  {mark} {name:<16} {desc}")
 
+    return 0
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# cache  (Stage 13)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _cmd_cache(argv: List[str]) -> int:
+    """corpussmith cache [stats|clear|show|export] [args...]
+
+    Subcommands
+    -----------
+    stats          (default) Show cache statistics.
+    clear [--yes]  Delete the cache file.
+    show QUERY     Show nearest cached titles for QUERY.
+    export PATH    Dump cache to a JSONL or CSV file.
+    """
+    sub = argv[0] if argv else "stats"
+    rest = argv[1:] if argv else []
+
+    if sub == "stats":
+        return _cache_stats()
+    if sub == "clear":
+        return _cache_clear(rest)
+    if sub == "show":
+        return _cache_show(rest)
+    if sub == "export":
+        return _cache_export(rest)
+    print(f"unknown subcommand: {sub!r}", file=sys.stderr)
+    print("usage: corpussmith cache [stats|clear|show|export]", file=sys.stderr)
+    return 1
+
+
+def _cache_stats() -> int:
+    from corpussmith.search.concept_cache import stats, cache_path
+    s = stats()
+    if not s["exists"] or s["records"] == 0:
+        print("concept cache: not yet created")
+        return 0
+    n = s["records"]
+    warm = s.get("warming_up", n < 8)
+    status = "warming up" if warm else "active"
+    print(f"concept cache:")
+    print(f"  records  : {n}  ({status})")
+    if not warm and s.get("top_domains"):
+        print("  top domains:")
+        for name, count in s["top_domains"][:5]:
+            print(f"    {count:>4}×  {name}")
+    print(f"  path     : {cache_path()}")
+    return 0
+
+
+def _cache_clear(argv: List[str]) -> int:
+    from corpussmith.search.concept_cache import cache_path
+    yes = _pop_flag(argv, "--yes", "-y")
+    path = cache_path()
+    if not path.exists():
+        print("nothing to clear — cache does not exist yet")
+        return 0
+    if not yes:
+        try:
+            answer = input(f"Delete {path}? [y/N] ").strip().lower()
+        except EOFError:
+            answer = ""
+        if answer not in ("y", "yes"):
+            print("Aborted.", file=sys.stderr)
+            return 1
+    path.unlink()
+    print(f"removed: {path}")
+    return 0
+
+
+def _cache_show(argv: List[str]) -> int:
+    if not argv:
+        print("error: provide a probe title after 'cache show'", file=sys.stderr)
+        return 1
+    query = " ".join(argv)
+    from corpussmith.search.concept_cache import lookup, load_all
+    records = load_all()
+    n = len(records)
+    result = lookup(query, min_cache_records=1, min_similarity=0.15)
+    if result is None or not result.sample_titles:
+        print(f"no neighbour above similarity threshold (cache has {n} record(s))")
+        return 0
+    print(f"nearest cached titles for: {query!r}")
+    for entry in result.sample_titles:
+        print(f"  {entry}")
+    return 0
+
+
+def _cache_export(argv: List[str]) -> int:
+    import csv
+    from corpussmith.search.concept_cache import load_all
+    if not argv:
+        print("error: specify output path", file=sys.stderr)
+        return 1
+    out_path = Path(argv[0]).expanduser().resolve()
+    records = load_all()
+    ext = out_path.suffix.lower()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if ext == ".csv":
+        with out_path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["title", "ts", "concept_name", "cross_paper_count",
+                             "avg_score", "openalex_id", "level"])
+            for r in records:
+                for c in r.concepts:
+                    writer.writerow([
+                        r.title, r.ts,
+                        c.get("name", ""), c.get("cross_paper_count", ""),
+                        c.get("avg_score", ""), c.get("openalex_id", ""),
+                        c.get("level", ""),
+                    ])
+    else:
+        import json
+        with out_path.open("w", encoding="utf-8") as f:
+            for r in records:
+                f.write(json.dumps({"title": r.title, "ts": r.ts,
+                                    "concepts": r.concepts},
+                                   ensure_ascii=False) + "\n")
+
+    print(f"exported {len(records)} record(s) to {out_path}")
     return 0
 
 

@@ -158,7 +158,7 @@ def _env():
     import os
     return {
         **os.environ,
-        # autouse conftest set SCHOLARFORGE_CACHE_DIR to a tmp path; pass it
+        # autouse conftest set CORPUSSMITH_CACHE_DIR to a tmp path; pass it
         # through to the subprocess so it sees the same isolation.
     }
 

@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Install — ScholarForge</title>
+<title>Install — CorpusSmith</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <nav>
   <div class="nav-inner">
-    <a href="index.html" class="brand">scholarforge</a>
+    <a href="index.html" class="brand">corpussmith</a>
     <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
     <div class="nav-links">
       <a href="features.html">Features</a>
@@ -19,7 +19,7 @@
       <a href="sources.html">Sources</a>
       <a href="pricing.html">Pricing</a>
       <span class="spacer"></span>
-      <a href="https://github.com/AnastasiosPapalias/Python/tree/main/scholarforge">GitHub</a>
+      <a href="https://github.com/corpussmith/corpussmith">GitHub</a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀</button>
     </div>
   </div>
@@ -41,34 +41,34 @@
         <button class="install-tab" onclick="switchInstall('full', this)">With PDF + DOCX</button>
       </div>
       <div class="install-body">
-        <code id="install-cmd-page">git clone https://github.com/AnastasiosPapalias/Python.git && cd Python/scholarforge && pip install -e .</code>
+        <code id="install-cmd-page">git clone https://github.com/corpussmith/corpussmith.git && cd corpussmith && pip install -e .</code>
         <button class="copy-btn" onclick="copyCmd(this, 'install-cmd-page')">Copy</button>
       </div>
     </div>
 
     <pre><code># verify
-scholarforge --version</code></pre>
+corpussmith --version</code></pre>
   </section>
 
   <section>
     <h2>Windows, first-time user</h2>
     <p>A step-by-step walkthrough for users with no Python background:</p>
-    <a href="https://github.com/AnastasiosPapalias/Python/blob/main/scholarforge/BETA-TESTER-GUIDE.md" class="btn btn-secondary">Beta Tester Guide →</a>
+    <a href="https://github.com/corpussmith/corpussmith/blob/main/BETA-TESTER-GUIDE.md" class="btn btn-secondary">Beta Tester Guide →</a>
   </section>
 
   <section>
     <h2>First project</h2>
     <pre><code>mkdir my-research
-scholarforge new my-research
+corpussmith new my-research
 # wizard guides you through seven plain-English questions
 
-scholarforge search --project my-research "your title or question"
-scholarforge export --project my-research --format markdown</code></pre>
+corpussmith search --project my-research "your title or question"
+corpussmith export --project my-research --format markdown</code></pre>
   </section>
 
   <section>
     <h2>API keys <span class="tag coming">optional</span></h2>
-    <p>ScholarForge works with zero keys. Two sources benefit from free API keys for higher rate limits:</p>
+    <p>Corpus Smith works with zero keys. Two sources benefit from free API keys for higher rate limits:</p>
 
     <div class="grid grid-2">
       <div class="card">
@@ -82,22 +82,22 @@ scholarforge export --project my-research --format markdown</code></pre>
     </div>
 
     <pre><code># Generate config template
-scholarforge config --init
+corpussmith config --init
 
-# Edit ~/.scholarforge.toml with your keys
-scholarforge config        # verify key status</code></pre>
+# Edit ~/.corpussmith.toml with your keys
+corpussmith config        # verify key status</code></pre>
   </section>
 
   <section>
     <h2>Upgrading</h2>
-    <pre><code>cd Python/scholarforge
+    <pre><code>cd corpussmith
 git pull
 pip install -e .</code></pre>
   </section>
 
   <section>
     <h2>Uninstall</h2>
-    <pre><code>pip uninstall scholarforge</code></pre>
+    <pre><code>pip uninstall corpussmith</code></pre>
     <p>Your project folders are plain files — delete them if you want to.</p>
   </section>
 
@@ -113,8 +113,8 @@ pip install -e .</code></pre>
 
 <script>
 const cmds = {
-  standard: 'git clone https://github.com/AnastasiosPapalias/Python.git && cd Python/scholarforge && pip install -e .',
-  full: 'git clone https://github.com/AnastasiosPapalias/Python.git && cd Python/scholarforge && pip install -e ".[full]"'
+  standard: 'git clone https://github.com/corpussmith/corpussmith.git && cd corpussmith && pip install -e .',
+  full: 'git clone https://github.com/corpussmith/corpussmith.git && cd corpussmith && pip install -e ".[full]"'
 };
 
 function switchInstall(key, btn) {

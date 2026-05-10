@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Features — ScholarForge</title>
+<title>Features — CorpusSmith</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <nav>
   <div class="nav-inner">
-    <a href="index.html" class="brand">scholarforge</a>
+    <a href="index.html" class="brand">corpussmith</a>
     <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
     <div class="nav-links">
       <a href="features.html" class="current">Features</a>
@@ -19,7 +19,7 @@
       <a href="sources.html">Sources</a>
       <a href="pricing.html">Pricing</a>
       <span class="spacer"></span>
-      <a href="https://github.com/AnastasiosPapalias/Python/tree/main/scholarforge">GitHub</a>
+      <a href="https://github.com/corpussmith/corpussmith">GitHub</a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀</button>
     </div>
   </div>
@@ -39,7 +39,7 @@
       <div class="card">
         <div class="card-tag green">Core</div>
         <h3>Title-to-query expansion</h3>
-        <p>Paste a full research title or natural-language question. ScholarForge classifies the input, extracts the subject, and expands it deterministically into a query plan spanning every source.</p>
+        <p>Paste a full research title or natural-language question. CorpusSmith classifies the input, extracts the subject, and expands it deterministically into a query plan spanning every source.</p>
       </div>
 
       <div class="card">
@@ -63,7 +63,7 @@
       <div class="card">
         <div class="card-tag green">Core</div>
         <h3>Knowledge dataset builder</h3>
-        <p>Run <code>scholarforge build</code> to extract, chunk, and hash every document into a JSONL dataset. Feed RAG systems, train retrieval indices, or search your reading pile.</p>
+        <p>Run <code>corpussmith build</code> to extract, chunk, and hash every document into a JSONL dataset. Feed RAG systems, train retrieval indices, or search your reading pile.</p>
       </div>
 
       <div class="card">
@@ -75,7 +75,13 @@
       <div class="card">
         <div class="card-tag green">Core</div>
         <h3>Beginner onboarding wizard</h3>
-        <p><code>scholarforge new my-research</code> launches a plain-English wizard — no jargon, one question per screen, defaults you can accept with Enter.</p>
+        <p><code>corpussmith new my-research</code> launches a plain-English wizard — no jargon, one question per screen, defaults you can accept with Enter.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-tag green">Core</div>
+        <h3>Concept enrichment</h3>
+        <p>OpenAlex cross-paper concept signal automatically seeds and refines your query plan. Per-source templates for PubMed (MeSH), OpenAlex, and arXiv. Local cache for instant warm starts.</p>
       </div>
 
       <div class="card">
@@ -134,7 +140,7 @@
   <span>Built by <a href="https://github.com/AnastasiosPapalias">Anastasios Papalias</a> · Thessaloniki, Greece</span>
   <div class="footer-links">
     <a href="index.html">Home</a>
-    <a href="https://github.com/AnastasiosPapalias/Python/tree/main/scholarforge">Source</a>
+    <a href="https://github.com/corpussmith/corpussmith">Source</a>
   </div>
 </footer>
 

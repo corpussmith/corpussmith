@@ -51,12 +51,20 @@ def query(
     return _query(text, limit=limit, subject=subject, store_path=store_path)
 
 
-def _ingest(records, **_) -> int:  # pragma: no cover
-    raise NotImplementedError("memory graph ingestion is shipped in the paid build")
+def _ingest(records, **kw) -> int:  # pragma: no cover
+    try:
+        from corpussmith_premium.memory_graph import _ingest as _real
+        return _real(records, **kw)
+    except ImportError:
+        raise NotImplementedError("memory graph ingestion is shipped in the paid build")
 
 
-def _query(text, **_) -> MemoryQueryResult:  # pragma: no cover
-    raise NotImplementedError("memory graph query is shipped in the paid build")
+def _query(text, **kw) -> MemoryQueryResult:  # pragma: no cover
+    try:
+        from corpussmith_premium.memory_graph import _query as _real
+        return _real(text, **kw)
+    except ImportError:
+        raise NotImplementedError("memory graph query is shipped in the paid build")
 
 
 __all__ = ["MemoryQueryResult", "ingest", "query"]

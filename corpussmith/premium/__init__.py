@@ -83,7 +83,7 @@ def _read_toml_license() -> Optional[str]:
 
 def get_status() -> PremiumStatus:
     """Inspect the environment and config for a premium activation."""
-    env_key = os.environ.get("CORPUSSMITH_PREMIUM_KEY", "").strip()
+    env_key = (os.environ.get("CORPUSSMITH_PREMIUM_KEY") or os.environ.get("SCHOLARFORGE_PREMIUM_KEY") or "").strip()
     if env_key:
         return PremiumStatus(active=True, source="env", key_preview=_mask(env_key))
 
@@ -91,7 +91,7 @@ def get_status() -> PremiumStatus:
     if toml_key:
         return PremiumStatus(active=True, source="config", key_preview=_mask(toml_key))
 
-    unlock = os.environ.get("CORPUSSMITH_PREMIUM_UNLOCK", "").strip().lower()
+    unlock = (os.environ.get("CORPUSSMITH_PREMIUM_UNLOCK") or os.environ.get("SCHOLARFORGE_PREMIUM_UNLOCK") or "").strip().lower()
     if unlock in {"1", "true", "yes", "on"}:
         return PremiumStatus(active=True, source="unlock", key_preview="test-unlock")
 
