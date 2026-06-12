@@ -718,7 +718,11 @@ def prompt_int_with_help(question: str, field_key: str, default: int,
 # Constants
 # ─────────────────────────────────────────────────────────────────────────────
 
-USER_AGENT         = "Corpus Smith/3.0 (https://github.com/corpussmith/corpussmith)"
+# Contact for API polite-pools (OpenAlex, Crossref). A real mailto promotes
+# requests out of the anonymous, heavily-throttled pool. Override via the
+# CORPUSSMITH_CONTACT_EMAIL env var.
+CONTACT_EMAIL      = os.environ.get("CORPUSSMITH_CONTACT_EMAIL", "hello@corpussmith.dev")
+USER_AGENT         = f"Corpus Smith/3.0 (https://github.com/corpussmith/corpussmith; mailto:{CONTACT_EMAIL})"
 REQUEST_TIMEOUT    = 45
 DOWNLOAD_TIMEOUT   = 180
 
@@ -1102,7 +1106,7 @@ def filter_records(records: List[HarvestRecord], min_score: float) -> List[Harve
 # ─────────────────────────────────────────────────────────────────────────────
 
 def search_openalex(query: str, query_mode: str, subjects: List[str], per_page: int = 25) -> List[HarvestRecord]:
-    data    = request_with_retry(OPENALEX_BASE, {"search": query, "per-page": per_page}, expect_json=True)
+    data    = request_with_retry(OPENALEX_BASE, {"search": query, "per-page": per_page, "mailto": CONTACT_EMAIL}, expect_json=True)
     results = data.get("results", [])
     out     = []
     for item in results:
@@ -1135,7 +1139,7 @@ def search_openalex(query: str, query_mode: str, subjects: List[str], per_page: 
 
 
 def search_crossref(query: str, query_mode: str, subjects: List[str], rows: int = 25) -> List[HarvestRecord]:
-    data  = request_with_retry(CROSSREF_BASE, {"query.bibliographic": query, "rows": rows}, expect_json=True)
+    data  = request_with_retry(CROSSREF_BASE, {"query.bibliographic": query, "rows": rows, "mailto": CONTACT_EMAIL}, expect_json=True)
     items = data.get("message", {}).get("items", [])
     out   = []
     for item in items:
@@ -2861,7 +2865,15 @@ def build_parser() -> argparse.ArgumentParser:
         description="Corpus Smith — Academic Research & Knowledge Pipeline",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-MODES
+PROJECT WORKSPACE (recommended — provenance-first)
+  new               Create a research project (wizard-guided)
+  search            Paste a title/question → expand to queries → harvest 20 APIs
+  import            Copy your own documents into the project corpus
+  build             Extract & chunk the project corpus into a knowledge dataset
+  review-project    Terminal report of your project state
+  export · config · cache · premium
+
+LEGACY MODES (no project; one-shot)
   harvest           Interactive wizard: search academic APIs, download documents
   forge [DIR]       Extract & chunk all documents in DIR into AI dataset
   pipeline          Run harvest then forge in sequence
