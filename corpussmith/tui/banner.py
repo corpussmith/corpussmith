@@ -33,7 +33,7 @@ def render(version: str = __version__, width: int | None = None) -> str:
         <blank>
           Corpus Smith
           the provenance-first scholarly research workspace
-          v3.4.0-dev · github.com/corpussmith/corpussmith
+          v3.5.0-beta.1 · github.com/corpussmith/corpussmith
           ──────────────────────────────────────────────
     """
     w = width if width is not None else _term_width()

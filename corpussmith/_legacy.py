@@ -2910,7 +2910,7 @@ FORMATS (Forge)
     try:
         from corpussmith import __version__ as _SF_VERSION
     except Exception:
-        _SF_VERSION = "3.4.0-dev"
+        _SF_VERSION = "3.5.0-beta.1"
     p.add_argument("--version", action="version", version=f"Corpus Smith {_SF_VERSION}")
     p.add_argument("--no-banner", action="store_true", help="Suppress the ASCII banner")
     p.add_argument("--no-color",  action="store_true", help="Disable ANSI color output")
